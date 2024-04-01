@@ -802,13 +802,22 @@ node --env-file=config.env server
 ```
 
 
-### This is what the landing page of the record component will look like after we’ve added records 🖼️
-![employee1](https://github.com/shanibider/Full-Stack-MERN-Employee-Database-Application/assets/72359805/993850f4-3dff-470c-a241-074ee8aa55a1)
+## Screenshots 🖼️ -
 
+### This is what the landing page of the record component will look like after we’ve added records 🖼️
+![employeedb0](https://github.com/shanibider/Full-Stack-MERN-Employee-Database-Application/assets/72359805/0a52da4a-1960-4c8b-aebc-624c49d021b4)
 
 
 ### This is what the screen that lets you add an employee will look like 🖼️
-![employee2](https://github.com/shanibider/Full-Stack-MERN-Employee-Database-Application/assets/72359805/357c9187-0c44-440a-8f42-19632cd2768b)
+![employeedb2](https://github.com/shanibider/Full-Stack-MERN-Employee-Database-Application/assets/72359805/f2aa16a6-8982-47c5-9bea-8f36667e1592)
+
+
+### MongoDB Atlas Database 🖼️
+#### Project: `React-Projects`, Database: `employees`, collection: `records` 🛢 -
+![employeedb1](https://github.com/shanibider/Full-Stack-MERN-Employee-Database-Application/assets/72359805/b76c3087-ad62-495f-91e5-e31cfb273158)
+
+
+
 
 <br>
 
