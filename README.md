@@ -868,10 +868,16 @@ useEffect(() => {
 ```
 
 - After closing everything, to start the app, follow the steps below.
-- Ensure that the server app is still running. If it’s not, start it by executing the following command in the server directory:
+- Ensure that the server app is still running. If it’s not, start it by executing the following command in the `server directory`:
 ```bash
 node --env-file=config.env server
 ```
+
+- In a new terminal, go to the `client directory` and run the command:
+```bash
+npm run dev
+```
+
 
 
 ## Screenshots 🖼️ -
