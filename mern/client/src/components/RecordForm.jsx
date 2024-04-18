@@ -1,21 +1,39 @@
+// Serves as a `form component` for creating or updating employee records.
+// It provides a UI to input employee details like name, position, and level.
+// It interacts with an API to fetch existing records and save new or updated records.
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
-export default function Record() {
+export default function RecordForm() {
+  // State variables to manage form data and record status (data for the employee record)
   const [form, setForm] = useState({
     name: "",
     position: "",
     level: "",
   });
-  const [isNew, setIsNew] = useState(true);
-  const params = useParams();
-  const navigate = useNavigate();
+  const [isNew, setIsNew] = useState(true); // Flag to check if it's a new record or existing
+  const params = useParams();         // Stores the route parameters, specifically the id of the record.
+  const navigate = useNavigate();     // A function to navigate between routes
 
+
+  // useEffect to fetch an existing record when the component mounts, if an id is provided in the URL.
   useEffect(() => {
+
+    // Fetching Record:
+    // Makes a GET request to fetch the record with the given id.
+    // If successful, it updates the form with the fetched record.
+    // If the record doesn't exist, it navigates back to the home page.
     async function fetchData() {
-      const id = params.id?.toString() || undefined;
-      if(!id) return;
-      setIsNew(false);
+      // Check if the route has an ID parameter.
+      // Attempt to get the id from params and convert it to a string, or if it doesn't exist or undefined, set id to undefined.
+      const id = params.id?.toString() || undefined; 
+      if(!id) return;   //if id is undefined exit the fetchData function early without making fetch request.
+
+      setIsNew(false); // Exit early if id is undefined
+
+
+      // Makes a GET request to fetch the record with the given id.
       const response = await fetch(
         `http://localhost:5050/record/${params.id.toString()}`
       );
@@ -24,33 +42,54 @@ export default function Record() {
         console.error(message);
         return;
       }
+
       const record = await response.json();
       if (!record) {
         console.warn(`Record with id ${id} not found`);
         navigate("/");
         return;
       }
-      setForm(record);
-    }
+
+      setForm(record); // Set the form state with fetched record data
+    } // end of fetchData()
+
+
     fetchData();
+
     return;
   }, [params.id, navigate]);
 
-  // These methods will update the state properties.
+
+
+
+
+
+
+  // Function to Updates the form state with new values.
+  // Takes an object with new values and merges it with the current form state.
   function updateForm(value) {
     return setForm((prev) => {
       return { ...prev, ...value };
     });
   }
 
-  // This function will handle the submission.
+
+
+
+
+  // Handles form submission by either creating a new record or updating an existing one.
+  // When either a POST or PATCH request is sent to the URL, fetch will either add a new record to the database or update an existing record in the database.
   async function onSubmit(e) {
     e.preventDefault();
+    // Prepare Data: Copies the current form state to prepare the data for submission.
     const person = { ...form };
     try {
+
       let response;
       if (isNew) {
-        // if we are adding a new record we will POST to /record.
+        // API Request:
+        // Makes a POST request to create a new record if isNew is true.
+        // Makes a PATCH request to update an existing record if isNew is false.
         response = await fetch("http://localhost:5050/record", {
           method: "POST",
           headers: {
@@ -58,8 +97,9 @@ export default function Record() {
           },
           body: JSON.stringify(person),
         });
-      } else {
-        // if we are updating a record we will PATCH to /record/:id.
+      } 
+      
+      else {
         response = await fetch(`http://localhost:5050/record/${params.id}`, {
           method: "PATCH",
           headers: {
@@ -69,18 +109,35 @@ export default function Record() {
         });
       }
 
-      if (!response.ok) {
+      if (!response.ok) {   // Error Handling: Catches any errors that occur during the API request.
         throw new Error(`HTTP error! status: ${response.status}`);
       }
     } catch (error) {
       console.error('A problem occurred adding or updating a record: ', error);
-    } finally {
+    } 
+    
+    // Cleanup:
+    // Clears the form after submission.
+    // Navigates back to the home page.
+    finally {
+      // Clear the form and navigate back to home page
       setForm({ name: "", position: "", level: "" });
       navigate("/");
     }
   }
 
-  // This following section will display the form that takes the input from the user.
+
+
+
+
+  // Renders the form to capture employee information.
+  // Title: Displays a title for the form.
+  // Employee Info: Displays a section title and description for employee information.
+  // Form Fields:
+  // Name: Input field for the employee's name.
+  // Position: Input field for the employee's position.
+  // Level: Radio buttons to select the employee's level (Intern, Junior, Senior).
+  // Submit Button: A button to save the employee record.
   return (
     <>
       <h3 className="text-lg font-semibold p-4">Create/Update Employee Record</h3>
@@ -207,3 +264,12 @@ export default function Record() {
     </>
   );
 }
+
+
+/*
+Component Summary:
+- The component can be used to either create a new employee record or update an existing one.
+- It fetches existing record data if an `id` is provided.
+- It communicates with an API to save or update records.
+- It provides form fields for capturing employee details.
+*/

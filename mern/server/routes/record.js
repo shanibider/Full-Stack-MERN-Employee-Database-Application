@@ -1,24 +1,20 @@
+
 import express from "express";
-
-// This will help us connect to the database
 import db from "../db/connection.js";
+import { ObjectId } from "mongodb"; // convert the id from string to ObjectId for the _id.
 
-// This help convert the id from string to ObjectId for the _id.
-import { ObjectId } from "mongodb";
-
-// router is an instance of the express router.
-// We use it to define our routes.
+// Creating an instance of the express router, define our routes.
 // The router will be added as a middleware and will take control of requests starting with path /record.
 const router = express.Router();
 
-// This section will help you get a list of all the records.
+// Get a list of all the records.
 router.get("/", async (req, res) => {
   let collection = await db.collection("records");
   let results = await collection.find({}).toArray();
   res.send(results).status(200);
 });
 
-// This section will help you get a single record by id
+// Get a single record by id
 router.get("/:id", async (req, res) => {
   let collection = await db.collection("records");
   let query = { _id: new ObjectId(req.params.id) };
@@ -28,7 +24,9 @@ router.get("/:id", async (req, res) => {
   else res.send(result).status(200);
 });
 
-// This section will help you create a new record.
+// Create a new record.
+// the request made by 'fetch("http://localhost:5050/record")' in client
+// corresponds to this route handler defined in router.post("/", ...) on server.
 router.post("/", async (req, res) => {
   try {
     let newDocument = {
@@ -45,7 +43,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// This section will help you update a record by id.
+// Update a record by id.
 router.patch("/:id", async (req, res) => {
   try {
     const query = { _id: new ObjectId(req.params.id) };
@@ -56,7 +54,6 @@ router.patch("/:id", async (req, res) => {
         level: req.body.level,
       },
     };
-
     let collection = await db.collection("records");
     let result = await collection.updateOne(query, updates);
     res.send(result).status(200);
@@ -66,7 +63,7 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
-// This section will help you delete a record
+// Delete a record
 router.delete("/:id", async (req, res) => {
   try {
     const query = { _id: new ObjectId(req.params.id) };

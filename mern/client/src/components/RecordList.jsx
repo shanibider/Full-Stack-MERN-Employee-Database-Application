@@ -1,6 +1,15 @@
+// Responsible for displaying a table of employee records fetched from an API.
+// Each record can be edited or deleted using corresponding buttons.
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import PropTypes from 'prop-types';
 
+
+// 'Record' is a functional component inside 'RecordList.jsx' 
+// Represents a *row* in the records table, displayed in the RecordList component.
+// It receives a single record as a prop and displays its details (name, position, level).
+// It also provides edit and delete functionality for each record.
 const Record = (props) => (
   <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
     <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
@@ -35,35 +44,72 @@ const Record = (props) => (
   </tr>
 );
 
+// Prop Validation - using PropTypes.shape to specify that the record prop should be an object with specific properties. 
+Record.propTypes = {
+  record: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    position: PropTypes.string.isRequired,
+    level: PropTypes.string.isRequired,
+  }).isRequired,
+  deleteRecord: PropTypes.func.isRequired,
+};
+
+
+
+
+
+
 export default function RecordList() {
+  // records is initialized using the useState hook as an empty array.
   const [records, setRecords] = useState([]);
 
-  // This method fetches the records from the database.
+
+
+  //useEffect Hook
+  // Fetches the list of employee records from the API when the component mounts or when records.length changes.
+  // Fetching Records: Makes a GET request to fetch all employee records.
+  // Error Handling: Logs an error message if the fetch request fails.
+  // Updating State: Sets the fetched records to the records state variable.
   useEffect(() => {
+
     async function getRecords() {
       const response = await fetch(`http://localhost:5050/record/`);
       if (!response.ok) {
         const message = `An error occurred: ${response.statusText}`;
         console.error(message);
         return;
-      }
+      }      
       const records = await response.json();
       setRecords(records);
     }
+
     getRecords();
+
     return;
   }, [records.length]);
 
-  // This method will delete a record
+
+
+
+  // deleteRecord Function
+  // Deletes a record from the database and updates the state to remove the deleted record.
+  // API Request: Makes a DELETE request to delete the record with the specified id.
+  // Updating State: Filters out the deleted record from the records array.
   async function deleteRecord(id) {
     await fetch(`http://localhost:5050/record/${id}`, {
       method: "DELETE",
     });
+    // Create a new array of records that does not include the deleted record.
+    // (if id from records don't matches the id to be deleted, keep it in the array, else remove it)
     const newRecords = records.filter((el) => el._id !== id);
     setRecords(newRecords);
   }
 
-  // This method will map out the records on the table
+
+
+  // Maps through the records array and renders a Record component for each record.
+  // Passes the record data and deleteRecord function as props to each Record component.
   function recordList() {
     return records.map((record) => {
       return (
@@ -76,7 +122,13 @@ export default function RecordList() {
     });
   }
 
-  // This following section will display the table with the records of individuals.
+
+
+
+  // Table Rendering
+  // Renders the base table to display the list of employee records.
+  // Table Header: Displays column headers for "Name", "Position", "Level", and "Action".
+  // Table Body: Calls recordList() to render the rows for each employee record using the Record component.
   return (
     <>
       <h3 className="text-lg font-semibold p-4">Employee Records</h3>
