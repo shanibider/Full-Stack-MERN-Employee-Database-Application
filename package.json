@@ -1,10 +1,10 @@
 {
-    "name": "react-final-project",
+    "name": "mern-employee",
     "version": "1.0.0",
     "description": "```\r $ cd our-website\r $ cd backend\r $ npm i\r $ npm start\r ```",
     "main": "index.js",
     "scripts": {
-      "build": "cd server && npm install && cd ../client && npm install && npm run dev",
+      "build": "cd mern && cd server && npm install && cd ../client && npm install && npm run dev",
       "start": "node server/server.js",
       "test": "echo \"Error: no test specified\" && exit 1"
     },
