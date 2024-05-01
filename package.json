@@ -4,8 +4,10 @@
     "description": "```\r $ cd our-website\r $ cd backend\r $ npm i\r $ npm start\r ```",
     "main": "index.js",
     "scripts": {
-    "build": "cd mern && cd client && npm install && cd ../server && npm install && npm start",
-      "start": "cd client && npm run build",
+        "dev": "node server",
+        "build": "npm run build:client && npm run build:server",
+        "build:client": "vite build --outDir dist/client",
+        "build:server": "vite build --outDir dist/server --ssr server/server.js",
       "test": "echo \"Error: no test specified\" && exit 1"
     },
     "repository": {
