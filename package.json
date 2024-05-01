@@ -1,0 +1,22 @@
+{
+    "name": "react-final-project",
+    "version": "1.0.0",
+    "description": "```\r $ cd our-website\r $ cd backend\r $ npm i\r $ npm start\r ```",
+    "main": "index.js",
+    "scripts": {
+      "build": "cd server && npm install && cd ../client && npm install && npm run dev",
+      "start": "node server/server.js",
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/shanibider/Full-Stack-MERN-Employee-Database-Application.git"
+      
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/shanibider/Full-Stack-MERN-Employee-Database-Application.git"
+    },
+    "homepage": "https://github.com/shanibider/Full-Stack-MERN-Employee-Database-Application/blob/master/README.md"
+  }

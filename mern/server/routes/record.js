@@ -5,6 +5,8 @@ import { ObjectId } from "mongodb"; // convert the id from string to ObjectId fo
 
 // Creating an instance of the express router, define our routes.
 // The router will be added as a middleware and will take control of requests starting with path /record.
+
+// each path start with "record" will be handled by this file
 const router = express.Router();
 
 // Get a list of all the records.
@@ -25,8 +27,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Create a new record.
-// the request made by 'fetch("http://localhost:5050/record")' in client
-// corresponds to this route handler defined in router.post("/", ...) on server.
+// corespond to 'fetch("http://localhost:5050/record")' in client
 router.post("/", async (req, res) => {
   try {
     let newDocument = {
