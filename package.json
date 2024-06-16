@@ -1,24 +1,36 @@
 {
-    "name": "mern-employee",
-    "version": "1.0.0",
-    "description": "```\r $ cd our-website\r $ cd backend\r $ npm i\r $ npm start\r ```",
-    "main": "index.js",
-    "scripts": {
-        "dev": "node server",
-        "build": "npm run build:client && npm run build:server",
-        "build:client": "vite build --outDir dist/client",
-        "build:server": "vite build --outDir dist/server --ssr server/server.js",
-      "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "repository": {
-      "type": "git",
-      "url": "git+https://github.com/shanibider/Full-Stack-MERN-Employee-Database-Application.git"
-      
-    },
-    "author": "",
-    "license": "ISC",
-    "bugs": {
-      "url": "https://github.com/shanibider/Full-Stack-MERN-Employee-Database-Application.git"
-    },
-    "homepage": "https://github.com/shanibider/Full-Stack-MERN-Employee-Database-Application/blob/master/README.md"
+  "name": "mern-employee",
+  "version": "1.0.0",
+  "description": "A MERN stack employee management application.",
+  "main": "server/server.js",
+  "scripts": {
+    "dev": "node server/server.js",
+    "build": "vite build --config client/vite.config.js",
+    "start": "node server/server.js",
+    "deploy": "npm run build && npm start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shanibider/Full-Stack-MERN-Employee-Database-Application.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shanibider/Full-Stack-MERN-Employee-Database-Application/issues"
+  },
+  "homepage": "https://github.com/shanibider/Full-Stack-MERN-Employee-Database-Application#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "cors": "^2.8.5",
+    "mongodb": "^4.1.4",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.2.0",
+    "process": "^0.11.10"
+  },
+  "devDependencies": {
+    "vite": "^2.4.4",
+    "@vitejs/plugin-react": "^1.0.0"
   }
+}
