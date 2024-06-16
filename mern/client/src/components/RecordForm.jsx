@@ -1,9 +1,11 @@
 // Serves as a `form component` for creating or updating employee records.
 // It provides a UI to input employee details like name, position, and level.
 // It interacts with an API to fetch existing records and save new or updated records.
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import process from 'process'; // Import the 'process' object from the 'process' module
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5050';
 
 export default function RecordForm() {
   // State variables to manage form data and record status (data for the employee record)
@@ -18,37 +20,34 @@ export default function RecordForm() {
 
 
   // useEffect to fetch an existing record when the component mounts, if an id is provided in the URL.
-  useEffect(() => {
 
     // Fetching Record:
     // Makes a GET request to fetch the record with the given id.
     // If successful, it updates the form with the fetched record.
     // If the record doesn't exist, it navigates back to the home page.
-    async function fetchData() {
       // Check if the route has an ID parameter.
       // Attempt to get the id from params and convert it to a string, or if it doesn't exist or undefined, set id to undefined.
-      const id = params.id?.toString() || undefined; 
+      useEffect(() => {
+        async function fetchData() {
+          const id = params.id?.toString() || undefined;
       if(!id) return;   //if id is undefined exit the fetchData function early without making fetch request.
 
       setIsNew(false); // Exit early if id is undefined
 
 
       // Makes a GET request to fetch the record with the given id.
-      const response = await fetch(
-        `http://localhost:5050/record/${params.id.toString()}`
-      );
+      const response = await fetch(`${API_URL}/record/${id}`);
       if (!response.ok) {
         const message = `An error has occurred: ${response.statusText}`;
         console.error(message);
         return;
       }
-
-      const record = await response.json();
-      if (!record) {
-        console.warn(`Record with id ${id} not found`);
-        navigate("/");
-        return;
-      }
+        const record = await response.json();
+        if (!record) {
+          console.warn(`Record with id ${id} not found`);
+          navigate("/");
+          return;
+        }
 
       setForm(record); // Set the form state with fetched record data
     } // end of fetchData()
@@ -84,13 +83,12 @@ export default function RecordForm() {
     // Prepare Data: Copies the current form state to prepare the data for submission.
     const person = { ...form };
     try {
-
       let response;
       if (isNew) {
         // API Request:
         // Makes a POST request to create a new record if isNew is true.
         // Makes a PATCH request to update an existing record if isNew is false.
-        response = await fetch("http://localhost:5050/record", {
+        response = await fetch(`${API_URL}/record`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -100,7 +98,7 @@ export default function RecordForm() {
       } 
       
       else {
-        response = await fetch(`http://localhost:5050/record/${params.id}`, {
+        response = await fetch(`${API_URL}/record/${params.id}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",

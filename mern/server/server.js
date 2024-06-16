@@ -5,8 +5,11 @@ import records from "./routes/record.js";
 const PORT = process.env.PORT || 5050;
 const app = express();
 
-app.use(cors());
-
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.resolve('public')));
+} else {
+  app.use(cors());
+}
 // middleware to parse incoming requests with JSON payloads
 app.use(express.json());
 // middleware to handle requests starting with /record

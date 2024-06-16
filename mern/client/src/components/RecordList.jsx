@@ -4,6 +4,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
+import process from 'process'; // Import the 'process' object from the 'process' module
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5050';
 
 
 // 'Record' is a functional component inside 'RecordList.jsx' 
@@ -74,7 +77,7 @@ export default function RecordList() {
   useEffect(() => {
 
     async function getRecords() {
-      const response = await fetch(`http://localhost:5050/record/`);
+      const response = await fetch(`${API_URL}/record/`);
       if (!response.ok) {
         const message = `An error occurred: ${response.statusText}`;
         console.error(message);
@@ -97,7 +100,7 @@ export default function RecordList() {
   // API Request: Makes a DELETE request to delete the record with the specified id.
   // Updating State: Filters out the deleted record from the records array.
   async function deleteRecord(id) {
-    await fetch(`http://localhost:5050/record/${id}`, {
+    await fetch(`${API_URL}/record/${id}`, {
       method: "DELETE",
     });
     // Create a new array of records that does not include the deleted record.
