@@ -6,7 +6,9 @@ import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
 import process from 'process'; // Import the 'process' object from the 'process' module
 
-const API_URL = process.env.NODE_ENV || 'http://localhost:5050';
+
+const API_URL = 
+process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:5050'; // API URL
 
 
 // 'Record' is a functional component inside 'RecordList.jsx' 

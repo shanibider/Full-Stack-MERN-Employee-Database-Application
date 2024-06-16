@@ -5,7 +5,8 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import process from 'process'; // Import the 'process' object from the 'process' module
 
-const API_URL = process.env.NODE_ENV || 'http://localhost:5050';
+const API_URL = 
+process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:5050'; // API URL
 
 export default function RecordForm() {
   // State variables to manage form data and record status (data for the employee record)
