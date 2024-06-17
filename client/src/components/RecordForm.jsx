@@ -1,15 +1,13 @@
-// Serves as a `form component` for creating or updating employee records.
-// It provides a UI to input employee details like name, position, and level.
-// It interacts with an API to fetch existing records and save new or updated records.
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import process from 'process'; // Import the 'process' object from the 'process' module
 
-const API_URL = 
-process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:5050'; // API URL
+// Form component for creating or updating employee records. (Create/Edit Employee Screen)
+
+const API_URL = process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:5050'; // API URL
 
 export default function RecordForm() {
-  // State variables to manage form data and record status (data for the employee record)
+  // Manage form data and record status.
   const [form, setForm] = useState({
     name: "",
     position: "",
@@ -19,54 +17,46 @@ export default function RecordForm() {
   const params = useParams();         // Stores the route parameters, specifically the id of the record.
   const navigate = useNavigate();     // A function to navigate between routes
 
-
-  // useEffect to fetch an existing record when the component mounts, if an id is provided in the URL.
-
-    // Fetching Record:
     // Makes a GET request to fetch the record with the given id.
     // If successful, it updates the form with the fetched record.
     // If the record doesn't exist, it navigates back to the home page.
-      // Check if the route has an ID parameter.
-      // Attempt to get the id from params and convert it to a string, or if it doesn't exist or undefined, set id to undefined.
-      useEffect(() => {
-        async function fetchData() {
-          const id = params.id?.toString() || undefined;
-      if(!id) return;   //if id is undefined exit the fetchData function early without making fetch request.
+    // Check if the route has an ID parameter.
+    // Attempt to get the id from params and convert it to a string, or if it doesn't exist or undefined, set id to undefined.
+      
+      
 
-      setIsNew(false); // Exit early if id is undefined
-
-
-      // Makes a GET request to fetch the record with the given id.
-      const response = await fetch(`${API_URL}/record/${id}`);
-      if (!response.ok) {
-        const message = `An error has occurred: ${response.statusText}`;
-        console.error(message);
-        return;
-      }
-        const record = await response.json();
-        if (!record) {
-          console.warn(`Record with id ${id} not found`);
-          navigate("/");
+// useEffect to fetch an existing record when the component mounts, if an id is provided in the URL. 
+    useEffect(() => {
+      async function fetchData() {
+        const id = params.id?.toString() || undefined; // get the id from the URL params
+        if(!id) return;   //if id is undefined exit the fetchData function early without making fetch request.
+        setIsNew(false); // and set isNew to false.
+        // Makes a GET request to fetch the record with the given id.
+        const response = await fetch(`${API_URL}/record/${id}`);
+        if (!response.ok) {
+          const message = `An error has occurred: ${response.statusText}`;
+          console.error(message);
           return;
         }
+        // Parse the JSON response
+          const record = await response.json();
+          // If the record doesn't exist, navigate back to the home page.
+          if (!record) {
+            console.warn(`Record with id ${id} not found`);
+            navigate("/");
+            return;
+          }
 
-      setForm(record); // Set the form state with fetched record data
+        setForm(record); // Set the form state with fetched record data
     } // end of fetchData()
-
-
-    fetchData();
-
-    return;
-  }, [params.id, navigate]);
+    fetchData(); // Call the fetchData function
+    return; 
+  }, [params.id, navigate]); // trigger the effect when the id changes or when the navigate function changes.
 
 
 
-
-
-
-
-  // Function to Updates the form state with new values.
-  // Takes an object with new values and merges it with the current form state.
+// Updates the state with the new value,
+// ensuring the form state reflects the user's input.
   function updateForm(value) {
     return setForm((prev) => {
       return { ...prev, ...value };
@@ -75,20 +65,20 @@ export default function RecordForm() {
 
 
 
-
-
   // Handles form submission by either creating a new record or updating an existing one.
   // When either a POST or PATCH request is sent to the URL, fetch will either add a new record to the database or update an existing record in the database.
+  
+  // The onSubmit function is an async function that takes an event object as an argument.
   async function onSubmit(e) {
-    e.preventDefault();
-    // Prepare Data: Copies the current form state to prepare the data for submission.
+    e.preventDefault(); // Prevents the default form submission behavior, which would cause a page reload.
+    // Prepare Data: The current form state is copied into a variable named person.
     const person = { ...form };
     try {
-      let response;
+      let response; //response from the API request.
+      
+      // API Request: Makes a POST request to create a new record if isNew is true.
       if (isNew) {
-        // API Request:
-        // Makes a POST request to create a new record if isNew is true.
-        // Makes a PATCH request to update an existing record if isNew is false.
+        // fetch request to create a new record
         response = await fetch(`${API_URL}/record`, {
           method: "POST",
           headers: {
@@ -97,7 +87,8 @@ export default function RecordForm() {
           body: JSON.stringify(person),
         });
       } 
-      
+
+      // Makes a PATCH request to update an existing record if isNew is false.
       else {
         response = await fetch(`${API_URL}/record/${params.id}`, {
           method: "PATCH",
@@ -108,20 +99,17 @@ export default function RecordForm() {
         });
       }
 
-      if (!response.ok) {   // Error Handling: Catches any errors that occur during the API request.
+      if (!response.ok) {   // Error Handling
         throw new Error(`HTTP error! status: ${response.status}`);
       }
     } catch (error) {
       console.error('A problem occurred adding or updating a record: ', error);
-    } 
-    
-    // Cleanup:
-    // Clears the form after submission.
-    // Navigates back to the home page.
+    }     
+    // Cleanup: Clears the form after submission.
     finally {
       // Clear the form and navigate back to home page
       setForm({ name: "", position: "", level: "" });
-      navigate("/");
+      navigate("/"); // Navigates back to the home page.
     }
   }
 
@@ -159,12 +147,15 @@ export default function RecordForm() {
             <div className="sm:col-span-4">
               <label
                 htmlFor="name"
-                className="block text-sm font-medium leading-6 text-slate-900"
-              >
-                Name
+                className="block text-sm font-medium leading-6 text-slate-900">
+                Name          
               </label>
               <div className="mt-2">
                 <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-slate-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                 
+                  {/* onChange is react prop that get triggered when input value changes. 
+                  It calls the updateForm function with the new value of the input element that trigger the event.
+                  'name' is set to the current value of the input field.*/}
                   <input
                     type="text"
                     name="name"
@@ -174,14 +165,15 @@ export default function RecordForm() {
                     value={form.name}
                     onChange={(e) => updateForm({ name: e.target.value })}
                   />
+
                 </div>
               </div>
             </div>
+
             <div className="sm:col-span-4">
               <label
                 htmlFor="position"
-                className="block text-sm font-medium leading-6 text-slate-900"
-              >
+                className="block text-sm font-medium leading-6 text-slate-900">
                 Position
               </label>
               <div className="mt-2">
@@ -198,6 +190,7 @@ export default function RecordForm() {
                 </div>
               </div>
             </div>
+
             <div>
               <fieldset className="mt-4">
                 <legend className="sr-only">Position Options</legend>
@@ -210,12 +203,10 @@ export default function RecordForm() {
                       value="Intern"
                       className="h-4 w-4 border-slate-300 text-slate-600 focus:ring-slate-600 cursor-pointer"
                       checked={form.level === "Intern"}
-                      onChange={(e) => updateForm({ level: e.target.value })}
-                    />
+                      onChange={(e) => updateForm({ level: e.target.value })} />
                     <label
                       htmlFor="positionIntern"
-                      className="ml-3 block text-sm font-medium leading-6 text-slate-900 mr-4"
-                    >
+                      className="ml-3 block text-sm font-medium leading-6 text-slate-900 mr-4">
                       Intern
                     </label>
                     <input
@@ -229,8 +220,7 @@ export default function RecordForm() {
                     />
                     <label
                       htmlFor="positionJunior"
-                      className="ml-3 block text-sm font-medium leading-6 text-slate-900 mr-4"
-                    >
+                      className="ml-3 block text-sm font-medium leading-6 text-slate-900 mr-4">
                       Junior
                     </label>
                     <input
@@ -244,31 +234,25 @@ export default function RecordForm() {
                     />
                     <label
                       htmlFor="positionSenior"
-                      className="ml-3 block text-sm font-medium leading-6 text-slate-900 mr-4"
-                    >
+                      className="ml-3 block text-sm font-medium leading-6 text-slate-900 mr-4">
                       Senior
                     </label>
                   </div>
                 </div>
-              </fieldset>
+              </fieldset>              
             </div>
-          </div>
-        </div>
+
+          </div> {/* End of grid */}
+        </div> {/** End of bigger grid */}
+        
+        {/* save button */}
         <input
           type="submit"
           value="Save Employee Record"
           className="inline-flex items-center justify-center whitespace-nowrap text-md font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-slate-100 hover:text-accent-foreground h-9 rounded-md px-3 cursor-pointer mt-4"
         />
+
       </form>
     </>
   );
 }
-
-
-/*
-Component Summary:
-- The component can be used to either create a new employee record or update an existing one.
-- It fetches existing record data if an `id` is provided.
-- It communicates with an API to save or update records.
-- It provides form fields for capturing employee details.
-*/

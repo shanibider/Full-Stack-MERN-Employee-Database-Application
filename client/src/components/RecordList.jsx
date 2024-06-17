@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from 'prop-types';
+import process from 'process';
+
+// Displaying a table of employee records fetched from an API.
+// Each record can be edited/deleted.
 
 const API_URL = process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:5050';
 
+// Record component receives a single record as a prop and displays its details (name, position, level).
 const Record = (props) => (
   <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
     <td className="p-4 align-middle [&amp;:has([role=checkbox])]:pr-0">
@@ -38,6 +43,8 @@ const Record = (props) => (
   </tr>
 );
 
+
+// Prop types for the Record component.
 Record.propTypes = {
   record: PropTypes.shape({
     _id: PropTypes.string.isRequired,
@@ -48,39 +55,51 @@ Record.propTypes = {
   deleteRecord: PropTypes.func.isRequired,
 };
 
-export default function RecordList() {
-  const [records, setRecords] = useState([]);
 
+// Functional component - displays a list of employee records fetched from an API.
+export default function RecordList() {
+  const [records, setRecords] = useState([]); // State variable (array) to store records
+
+  // useEffect hook to fetch records from the API.
+  // Every time the records array changes, the effect is triggered.
   useEffect(() => {
     async function getRecords() {
       try {
+        // Fetch records from the server
         const response = await fetch(`${API_URL}/record/`);
         if (!response.ok) {
           const message = `An error occurred: ${response.statusText}`;
           console.error(message);
           return;
         }
+        // Parse the JSON response
         const records = await response.json();
-        setRecords(records);
+        setRecords(records); // Update the records state
+
         console.log("Fetched records:", records); // Log the fetched records
-      } catch (error) {
-        console.error("Failed to fetch records:", error);
-      }
+      } catch (error) {console.error("Failed to fetch records:", error);}
     }
-    getRecords();
+    getRecords(); // Call the async function
   }, [records.length]);
 
+
+
+  // Function to delete a record by id.
   async function deleteRecord(id) {
     try {
+      // Send a DELETE request to the server
       await fetch(`${API_URL}/record/${id}`, {
         method: "DELETE",
       });
+      // Filter out the deleted record from the records array
       const newRecords = records.filter((el) => el._id !== id);
-      setRecords(newRecords);
+      setRecords(newRecords); // Update the records state
     } catch (error) {
       console.error("Failed to delete record:", error);
     }
   }
+
+
 
   return (
     <>
@@ -88,9 +107,11 @@ export default function RecordList() {
       <div className="border rounded-lg overflow-hidden">
         <div className="relative w-full overflow-auto">
           <table className="w-full caption-bottom text-sm">
+           
             <thead className="[&amp;_tr]:border-b">
-              <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
+              <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"> {/* table row */}
+                
+                <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">  {/* table head */}
                   Name
                 </th>
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
@@ -102,9 +123,13 @@ export default function RecordList() {
                 <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&amp;:has([role=checkbox])]:pr-0">
                   Action
                 </th>
+
               </tr>
             </thead>
+
             <tbody className="[&amp;_tr:last-child]:border-0">
+             {/* Map over records array and render 'Record' component, with
+             record, deleteRecord, and key prop. */}
               {records.map((record) => (
                 <Record
                   record={record}

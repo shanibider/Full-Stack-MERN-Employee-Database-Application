@@ -6,28 +6,24 @@ import path from 'path';
 const PORT = process.env.PORT || 5050;
 const app = express();
 
-// Modify server.js to Serve Frontend in Production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.resolve('public')));
-} else {
-  app.use(cors());
-  // middleware to parse incoming requests with JSON payloads
+// Middleware to handle CORS and JSON payloads
+app.use(cors());
 app.use(express.json());
 
-// middleware to handle requests starting with /record
-// 2nd argument is the records.js file
-//"localhost:5050/record" will be handled by records.js
+// Middleware to handle API requests starting with /record
 app.use("/record", records);
-}
 
-
+// Serve static files in production
 if (process.env.NODE_ENV === 'production') {
+  const __dirname = path.resolve();
+  app.use(express.static(path.join(__dirname, 'public')));
+
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve('public', 'index.html'));
+    res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
   });
 }
 
-// start the Express server
+// Start the Express server
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
